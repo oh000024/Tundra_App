@@ -1,0 +1,22 @@
+*{
+    padding:0;
+    margin: 0;
+    box-sizing: border-box;
+}
+:root {
+    font-size: calc(1vw + 1vh + .5vmin);
+}
+body {
+    font: 1rem/1.6 sans-serif;
+    width:100%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+
+.content.profiles{
+    visibility: hidden;
+}
+.content-padded.old{
+    visibility: hidden;
+}
