@@ -1,53 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Tundra</title>
-		<!-- Sets initial viewport load and disables zooming  -->
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-		<!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<meta name="mobile-web-app-capable" content="yes">
-		<!-- Include the compiled Ratchet CSS -->
-		<link href="css/ratchet.min.css" rel="stylesheet" />
-		
-		<!-- your OWN CSS file comes last -->
-		<link href="css/custom.css" rel="stylesheet" />
-		<link rel="stylesheet" href="css/main.css">
-	</head>
-	<body>
-		<header class="bar bar-nav">
-			<h1 class="title">HOME PAGE</h1>
-		</header>
-		<!-- bar bar-tab puts the <nav> at the bottom of the page -->
-		<nav class="bar bar-tab">
-			<a class="tab-item active" href="index.html" data-transition="slide-in">
-				<span class="icon icon-home"></span>
-				<span class="tab-label">Home</span>
-			</a>
-			<a class="tab-item" href="two.html" data-transition="slide-in">
-				<span class="icon icon-person"></span>
-				<span class="tab-label">Two</span>
-			</a>
-		</nav>
-		<div class="content">
-			<!-- main content for the page goes here -->
-			<div class="content-padded">
-				<!-- 				<h2>h2 home page heading</h2>
-				<p>Some content in the home page content area.</p>
-				<button class="btn btn-block">Block button</button> -->
-				<div id="output"></div>
-			</div>
-			
-		</div>
-		<script src="js/zingtouch.min.js"></script>				
-		<!-- include the compiled Ratchet JS -->
-<!--		<script src="js/dispatcher.js"></script>-->
-		<script src="js/ratchet.min.js"></script>
-		
 
-		<!-- then your own script -->
-		<script src="js/main.js"></script>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <title>Tundra</title>
+    <!-- Sets initial viewport load and disables zooming  -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Include the compiled Ratchet CSS -->
+    <link href="css/ratchet.min.css" rel="stylesheet" />
+
+    <!-- your OWN CSS file comes last -->
+    <link href="css/custom.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <header class="bar bar-nav">
+        <h1 class="title">HOME PAGE</h1>
+    </header>
+    <!-- bar bar-tab puts the <nav> at the bottom of the page -->
+    
+    <nav class="bar bar-tab">
+        <a class="tab-item active" href="#home" data-transition="slide-in">
+            <span class="icon icon-home"></span>
+            <span class="tab-label">Home</span>
+        </a>
+        <a class="tab-item"  href="#profiles" data-transition="slide-in">
+            <span class="icon icon-person"></span>
+            <span class="tab-label">Saved</span>
+        </a>
+    </nav>
+    
+    <div class="content home">
+        <!-- main content for the page goes here -->
+        <div class="content-padded">
+            <div id="output"></div>
+        </div>
+    </div>
+    <div class="content profiles">
+        <div class="content-padded">
+            <ul class="table-view">
+                <li class="table-view-cell">
+                    <a class="navigate-right">
+                    Item, link, &amp; chevron 
+                    </a>
+                </li>
+                <li class="table-view-cell">
+                    <a class="navigate-right">    
+                        <span class="media-object pull-left icon icon-trash"></span>
+                        <div class="media-body">
+                        Item, link, icon, and chevron
+                        </div>
+                    </a>
+                </li>
+                <li class="table-view-cell">
+                    Text only with a button <button class="btn">Button</button>
+                </li>
+            </ul>            
+        </div>        
+    </div>
+    
+
+
+        
+  
+    <script src="js/zingtouch.min.js"></script>
+    <script src="js/ratchet.min.js"></script>
+    <!-- then your own script -->
+    <script src="js/main.js"></script>
+</body>
+
 </html>

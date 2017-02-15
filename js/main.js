@@ -7,17 +7,73 @@ let currentItem = 0; // for current index
 let imgurl;
 
 
-var touchArea;
-var myRegion;
+// for tab
+let tab;
+let touchArea;
+let myRegion;
+let isFirst = true;
+
 
 class Person {
     constructor(first, last, avata) {
         this.first = first;
         this.last = last;
         this.avata = avata;
+        this.Ids=["home","profiles"];
     }
 }
+class ContentPage{
+    constructor(){
+        this.pages=document.querySelectorAll(".content");
+        this.tabs=document.querySelectorAll(".tab-item");
+        console.debug(this.pages);
+    }
+    getAllPages(){
+        return pages;
+    }
+    getActivePage(){
+        return document.querySelector(".content active");
+    }
+    getVisiblePageID(){
+        document.querySelector(".content active");
+    }
+    toggleVisible(val){
+        let value = "content "+val;
+        [].forEach.call(this.pages,function(page){
+            page.style.visibility = page.classList==value?"visible":"hidden";     
+        }) 
+    }
+    toggleTab(){
+        [].forEach.call(this.tabs,function(tab){
+            tab.classList.toggle("active");
+        })      
+    }
+}
+var PageMgr = new ContentPage();
+class ZingManager{
+    constructor(){
 
+    };
+    Init(content,output){
+        this.content = document.querySelector(content);
+        this.output = document.getElementById(output);
+        this.region = new ZingTouch.Region(this.content);      
+    };
+    bind(){
+        this.region.bind();
+    }
+    
+}
+class EventObj{
+    constructor(item){
+        this.id = document.querySelector(item);
+    }
+    getID(){return this.id;}
+    eventHandler(e){
+        
+    }
+}
+var zingobj = new ZingManager();
 function getIndex(value) {
 
     for (let i = 0; i < profiles.length; i++) {
@@ -37,11 +93,39 @@ document.addEventListener("DOMContentLoaded", function (ev) {
 
     slideshow = document.getElementById('output');
     var contentregion = document.querySelector(".content");
-
     myRegion = new ZingTouch.Region(contentregion);
 
+    tab = document.querySelectorAll(".tab-item");
+    [].forEach.call(tab, function(btn){
+        btn.addEventListener('click',activePage)
+        
+    });
+    
+
+    //zingobj.Init(".content","output");
+    //slideshow.addEventListener('pageshow',mainpage);
     getProfiles();
 });
+
+function mainpage(){
+    showfirstone();
+    console.log("main page");
+}
+
+function activePage(ev){
+    ev.preventDefault();
+    let tg = ev.currentTarget;
+    let id = ev.currentTarget.href.split("#")[1];
+    
+    if(tg.classList.contains("active")){
+        console.log("Sanme page");
+        return;
+    }
+    
+//    tg.classList.add("active");
+    PageMgr.toggleTab();
+    PageMgr.toggleVisible(id);
+}
 
 
 function getProfiles() {
@@ -52,28 +136,19 @@ function getProfiles() {
         .then(function (data) {
             imgurl = decodeURIComponent(data.imgBaseURL);
 
-            
-            //profiles = data.profiles;
-        data.profiles.forEach(function(person){
-            profiles.push(person);
-        })
+            profiles = profiles.concat(data.profiles);
             console.log(profiles);
-            //            profiles.forEach(function (person) {
-            //                let pobj = new Person(person.first, person.last, person.avata);
-            //                peopleContainer.push(pobj);
-            //
-            //            });
-
-            slideshow = document.getElementById('output');
+    
+        if(isFirst){
             showfirstone();
-            //        let binding;
-            //        let events;
-            //        let obj;
-            //        dispatcher(binding,obj, events);
-
+            //slideshow.addEventListener('pageshow',mainpage);
+            isFirst = false;  
+        }
         })
         .catch(function (err) {
-            alert(err.message);
+            //alert(err.message);
+        console.log("dkdkdd");
+        profiles = JSON.parse(localStorage.getItem("oh000024"));
         });
 }
 
@@ -92,10 +167,10 @@ function showfirstone() {
     item.appendChild(p)
     slideshow.appendChild(item);
 
-    setTimeout(function () {
-        item.classList.add('active');
-        myRegion.bind(item, mygesture, next);
-    }, 20);
+    item.classList.add('active');
+    myRegion.bind(item, mygesture, next);
+    slideshow.addEventListener('pageshow',mainpage);
+
 }
 
 var mygesture = new ZingTouch.Swipe({
@@ -166,17 +241,8 @@ function next(ev) {
     item.appendChild(p)
     p.appendChild(pdistance);
     slideshow.appendChild(item);
-
-    setTimeout(function () {
-        item.classList.add('active');
-        item.classList.add('fadein');
-
-        myRegion.bind(item, mygesture, next);
-    }, 20);
-//    currentItem++;
-//    if (currentItem > profiles.length - 1) {
-//        currentItem = 0;
-//    }
+    item.classList.add('active');
+    myRegion.bind(item, mygesture, next);
 
 }
 
@@ -213,7 +279,8 @@ function deleteItem(name) {
 
     if (null != ret) {
         console.log("find name: " + "".concat(ret.person.first, " ", ret.person.last));
-        profiles.splice(ret.index, 1);
+        profiles.shift();
+//        profiles.splice(ret.index, 1);
         console.log(profiles);
     } else {
         console.log("not found");
@@ -226,7 +293,8 @@ function saveItem(name) {
 
     if (null != ret) {
         console.log("find name: " + "".concat(ret.person.first, " ", ret.person.last));
-        profiles.splice(ret.index, 1);
+        profiles.shift();
+//        profiles.splice(ret.index, 1);
         peopleContainer.push(ret.person);
         localStorage.setItem("oh000024", JSON.stringify(peopleContainer));
     } else {
