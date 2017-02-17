@@ -26,11 +26,12 @@
     </header>
     <!-- bar bar-tab puts the <nav> at the bottom of the page --> 
     <nav class="bar bar-tab">
-        <a class="tab-item" href="index.html" data-transition="slide-out">
+        <a class="tab-item " tab-role="home" href="index.html" data-ignore="push" data-transition="slide-out">
+<!--           <a class="icon icon-left-nav pull-left" tab-role="home" href="index.html">-->
             <span class="icon icon-home"></span>
             <span class="tab-label">Home</span>
         </a>
-        <a class="tab-item active" href="two.html" data-transition="slide-out">
+        <a class="tab-item actice" href="two.html" tab-role="profiles" data-transition="slide-out">
             <span class="icon icon-list"></span>
             <span class="tab-label">Two</span>
         </a>
@@ -39,33 +40,15 @@
     <div class="content">
         <!-- main content for the page goes here -->
         <div class="content-padded">
-            <h3>h3 heading on page two</h3>
-            <p>Some different content in the page two content area.</p>
+            <h3>Profiles</h3>
+<!--            <p>Some different content in the page two content area.</p>-->
         </div>
-        <ul class="table-view">
-            <li class="table-view-cell">
-                <a class="navigate-right">
-                Item, link, &amp; chevron 
-                </a>
-            </li>
-            <li class="table-view-cell">
-                <a class="navigate-right">    
-                    <span class="media-object pull-left icon icon-trash"></span>
-                    <div class="media-body">
-                    Item, link, icon, and chevron
-                    </div>
-                </a>
-            </li>
-            <li class="table-view-cell">
-                Text only with a button <button class="btn">Button</button>
-            </li>
-        </ul>
         
     </div>
     
     <!-- Include the compiled Ratchet JS -->
     <script src="js/ratchet.min.js"></script>
     <!-- then your own script -->
-    <script src="js/main.js"></script>
+    <script src="js/profiles.js"></script>
   </body> 
 </html>

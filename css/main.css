@@ -17,6 +17,32 @@ body {
 .content.profiles{
     visibility: hidden;
 }
-.content-padded.old{
-    visibility: hidden;
+.content.home{
+  padding: 5vh 5vw;
+  background-color: #ddd;
+  min-height: 100vh;
+}
+img{
+    width: 80vw;
+}
+
+.fadein {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 1s linear;
+}
+.fadeout {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+}
+[tab-role="home"]{
+   
+}
+[tab-role="profiles"]{
+   
+}
+
+[data-role="link"]{
+    color: white;
 }
