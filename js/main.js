@@ -1,173 +1,62 @@
+/*****************************************************************
+File: profiels.js
+Author: Jake Oh
+Description:
+Here is the sequence of logic for the app
+- Initialize Zingtouch and set a push event in DOMContentLoaded
+- Fetch Profiels from edumedia
+- Preparation for First Profiles at createHtmlforProfile
+- And binding Zingtouch object with Dom Element
+- Process Swiping, When Swiping Event fired
+- Swipe to Left side--> Delete profile from interface and global array of profiles
+- Swipe to Rift: Delete the profiles from interface and global array of profiles and save to localStorage
+- In second page, show all saved profiels from localStorage
+- Click icon: Delte saved profile from UL and removed from global array and localStorage
+
+Version: 0.0.1
+Updated: Feb 16, 2017
+*****************************************************************/
+
+
+const LEFT = "LEFT";
+const RIGHT = "RIGHT";
+const MALE = "male";
+
 let gender = ""; //female or male or blank for both
-let url = "http://griffis.edumedia.ca/mad9022/tundra/get.profiles.php?gender=" + gender;
+var url = "http://griffis.edumedia.ca/mad9022/tundra/get.profiles.php?gender=" + gender;
+
 let profiles = []; // for all data after fetching
 let peopleContainer = [];
-let slideshow;
-let currentItem = 0; // for current index
-let imgurl;
-let content;
 
-// for tab
-let tab;
-let touchArea;
-let myRegion;
+var imgurl;
+//let content;
+let RegionOne;
+let regionTwo;
 let isFirst = true;
 
-var mygesture = new ZingTouch.Swipe({
-    numInputs: 1,
-    maxRestTime: 100,
-    escapeVelocity: 0.1
-});
 
-class Person {
-    constructor(first, last, avata) {
-        this.first = first;
-        this.last = last;
-        this.avata = avata;
-    }
-}
-
-class HtmlManager {
-    constructor() {
-        this.pages = document.querySelectorAll(".content");
-        this.tabs = document.querySelectorAll(".tab-item");
-        this.Ids = ["home", "profiles"];
-        this.slideshow = document.getElementById('output');
-        console.debug(this.pages);
-    }
-    getAllPages() {
-        return pages;
-    }
-    getActivePage() {
-        return document.querySelector(".content active");
-    }
-    getVisiblePageID() {
-        document.querySelector(".content active");
-    }
-    toggleVisible(val) {
-        let value = "content " + val;
-        [].forEach.call(this.pages, function (page) {
-            page.style.visibility = page.classList == value ? "visible" : "hidden";
-        })
-    }
-    toggleTab() {
-        [].forEach.call(this.tabs, function (tab) {
-            tab.classList.toggle("active");
-        })
-    }
-    createTag(){
-        let img = document.createElement("img");
-        let p = document.createElement("p");
-        let name = "".concat(profiles[0].first, " ", profiles[0].last);
-        let distance = document.createElement("p");
-        distance.textContent = "Distance: " + profiles[0].distance;
-        img.src = imgurl + profiles[0].avatar;
-        p.appendChild(img);  
-
-        slideshow.textContent = name; //items[currentItem];
-        //item.classList.add("slideshow-item");
-        slideshow.appendChild(p)
-        slideshow.appendChild(distance);
-        content.appendChild(slideshow);      
-    }
-}
-
-var PageMgr = new HtmlManager();
-class ZingManager {
-    constructor() {
-
-    };
-    Init(content, output) {
-        this.content = document.querySelector(content);
-        this.output = document.getElementById(output);
-        this.region = new ZingTouch.Region(this.content);
-    };
-    bind(target){
-        region.bind(target,mygesture,next);
-    }
-    unbind(target){
-        region.unbind(target,mygesture);
-    }
-}
-/*/****************************************************************
-// Ignore it not use it
-*****************************************************************/
-class EventObj {
-    constructor(item) {
-        this.id = document.querySelector(item);
-    }
-    getID() {
-        return this.id;
-    }
-    eventHandler(e) {
-
-    }
-}
-
-var zingobj = new ZingManager();
-//var eventobj = new EventObj();
-
-// To find profile in profiles
-function getIndex(value) {
-
-    for (let i = 0; i < profiles.length; i++) {
-        let name = "".concat(profiles[i].first, " ", profiles[i].last);
-        if (name == value) {
-            return {
-                person: profiles[i],
-                index: i
-            };
-        }
-    }
-    return null;
-}
-/****************************************************************
-// Initialize
-*****************************************************************/
 document.addEventListener("DOMContentLoaded", function (ev) {
 
-    // Getting a display area;
-    slideshow = document.getElementById(".content.home");
-    
-    // Getting a handle for a main page
-    var contentregion = document.querySelector(".content.home");
-    
-    // It contains output(Display area)
-    content = document.querySelector(".content.home .content-padded");
-    
-    // Initialize Zing
-    //myRegion = new ZingTouch.Region(contentregion);
+    RegionOne = ZingTouch.Region(document.querySelector(".content"));
 
-    // Getting handle of tab and attaching EventListener
-//    tab = document.querySelectorAll(".tab-item");
-//    [].forEach.call(tab, function (btn) {
-//        btn.addEventListener('click', activePage)
-//    });
-
-
-    zingobj.Init(".content.home","output");
-    
-    // Let's start;
     getProfiles();
+    window.addEventListener("push", function (ev) {
+
+        let contentDiv = ev.currentTarget.document.querySelector(".content");
+        let id = contentDiv.id;
+
+        switch (id) {
+        case "home":
+            createHtmlforProfile();
+            break;
+        case "two":
+            createLists();
+            break;
+        default:
+            createHtmlforProfile();
+        }
+    });
 });
-
-/*****************************************************************
-// Ignore it(Delete). It's for one page
-******************************************************************/
-function activePage(ev) {
-    ev.preventDefault();
-    let tg = ev.currentTarget;
-    let id = ev.currentTarget.href.split("#")[1];
-
-    if (tg.classList.contains("active")) {
-        console.log("Sanme page");
-        return;
-    }
-
-    PageMgr.toggleTab();
-    PageMgr.toggleVisible(id);
-}
-
 
 /*/****************************************************************
 // Fetch Data from server 
@@ -181,113 +70,56 @@ function getProfiles() {
         })
         .then(function (data) {
             imgurl = decodeURIComponent(data.imgBaseURL);
-
             profiles = profiles.concat(data.profiles);
-            console.log(profiles);
+            console.log("Fetch profiles: " + profiles.length);
 
             if (isFirst) {
                 createHtmlforProfile();
-                //slideshow.addEventListener('pageshow',mainpage);
                 isFirst = false;
             }
+            // }
         })
         .catch(function (err) {
-            console.log("dkdkdd");
-            profiles = JSON.parse(localStorage.getItem("oh000024"));
+            console.log(err);
         });
 }
+
 /****************************************************************
 // Display function
 // Bind tag and Zingtouch
 ****************************************************************/
-function createHtmlforProfile(){
+function createHtmlforProfile() {
+
+    RegionOne = ZingTouch.Region(document.querySelector(".content"));
+    let output = document.getElementById("output");
+    let contentregion = document.querySelector(".content");  
     
-    let item = document.createElement('div');
-    item.classList.add("output-item");
-    
+    let outputitemdiv = document.createElement('div');
+    outputitemdiv.classList.add("output-item");
+
     let img = document.createElement("img");
     let p = document.createElement("p");
     let name = "".concat(profiles[0].first, " ", profiles[0].last);
     let distance = document.createElement("p");
+    distance.style.fontSize = "2rem";
+    let action = document.createElement("p");
     distance.textContent = "Distance: " + profiles[0].distance;
     img.src = imgurl + profiles[0].avatar;
-    p.appendChild(img);  
-    
-    item.textContent = name; //items[currentItem];
-    //item.classList.add("slideshow-item");
-    item.appendChild(p)
-    item.appendChild(distance);
-    //content.appendChild(slideshow);
-    
-    item.classList.remove("fadeout");
-    item.classList.add("fadein");
-    slideshow.appendChild(item);
-    
-    //myRegion.bind(content, 'pan', next);    
-    myRegion.bind(img, mygesture, next); 
-}
-/*****************************************************************
-// Ignore it, I want to use promise but 
-******************************************************************/
-var pp = function(e){
-    return new Promise(function(resolve,reject){
-        
-        let action;;
-        console.log(ev.detail.data[0].currentDirection);
-        let direction = ev.detail.data[0].currentDirection;
+    p.appendChild(img);
+    p.appendChild(distance);
 
-        let translatevaleu;
-        if (100 < direction && direction < 260) {
-            //translatevaleu = "translate3d(-150%,0,0)";
-            action = "delete";
-        } else if (85 >= direction || 280 <= direction) {
-            ///translatevaleu = "translate3d(150%,0,0)";
-            action = "sage";
-        } else {
+    outputitemdiv.textContent = name;
+    let color = "red";
+    if (MALE === profiles[0].gender) {
+        color = "blue";
+    }
 
-            reject();
-        }        
-        console.log("Test");
-       
-        let old = document.querySelector('.output-item');
-        if (old) {
-            //old.style.transform = translatevaleu;
-            myRegion.unbind(old, mygesture);
-            old.classList.remove('fadein');
-    //        old.classList.remove('fadein');
-            old.classList.add('fadeout');
-            if (1 == left) {
-                deleteItem(old.firstChild.textContent);
-            } else if (0 == left) {
-                saveItem(old.firstChild.textContent);
-            }
-
-            //fadeOut(old);
-            //old.classList.add('fadeout');
-            console.log(old.style.textTransform);
-    //        setTimeout(function () {
-    //
-    //            old.parentElement.removeChild(old);
-    //        }, 200);
-            //old.innerHTML="";
-            old.parentElement.removeChild(old);
-    //        old.removeChild(old);
-        }
-    
-        resolve(action);
-
-    }) 
-}
-
-function eventHandler(ev){
-  pp(ev).then(function(text){
-    console.debug(ev);
-    console.log("fadeout and Fadein");
-    console.log("Is Left or Right");
-})
-.then(function(text){
-    console.log("Flash Delete or Save");
-})  
+    outputitemdiv.style.color = color;
+    outputitemdiv.style.fontSize = "3rem";
+    outputitemdiv.appendChild(p)
+        //outputitemdiv.appendChild(distance);
+    output.appendChild(outputitemdiv);
+    RegionOne.bind(outputitemdiv, 'pan', eventHandler);
 }
 
 
@@ -297,17 +129,14 @@ function eventHandler(ev){
 *****************************************************************/
 
 function next(ev) {
-    
+
     let left = -1;
     console.log(ev.detail.data[0].currentDirection);
     let direction = ev.detail.data[0].currentDirection;
 
-    let translatevaleu;
     if (130 < direction && direction < 240) {
-        //translatevaleu = "translate3d(-150%,0,0)";
         left = 1;
     } else if (45 >= direction || 330 <= direction) {
-        //translatevaleu = "translate3d(150%,0,0)";
         left = 0;
     } else {
 
@@ -316,77 +145,197 @@ function next(ev) {
 
     let old = document.querySelector('.output-item');
     if (old) {
-        //old.style.transform = translatevaleu;
-        myRegion.unbind(old, mygesture);
-        old.classList.remove('fadein');
-//        old.classList.remove('fadein');
-      
+
+        RegionOne.unbind(old, 'pan');
+        //old.classList.remove('fadein');
         old.classList.add('fadeout');
-        
-        setTimeout(function(){},1000);
+        let p = document.createElement("p");
+
         if (1 == left) {
-            {
-                let p = document.createElement("p");
-                p.textContent="Delete";
-                p.classList.add("fadein");
-                old.appendChild(p);
-                
-            }
+            p.textContent = "Delete";
             deleteItem(old.firstChild.textContent);
         } else if (0 == left) {
+            p.textContent = "Saved";
             saveItem(old.firstChild.textContent);
         }
+        old.appendChild(p);
+        //p.classList.add("fadein");
+        setTimeout(function () {
+            //p.classList.toggle("fadein");
+            p.classList.add("fadeout");
 
-        //fadeOut(old);
-        //old.classList.add('fadeout');
-        console.log(old.style.textTransform);
-//        setTimeout(function () {
+        }, 500);
+
+        setTimeout(function () {
+            if (profiles.length <= 3) {
+                old.parentElement.removeChild(old);
+                getProfiles();
+                console.log("end of file");
+                //return;
+            } else {
+                old.parentElement.removeChild(old);
+                createHtmlforProfile();
+                console.log("LocalStorage" + peopleContainer);
+            }
+        }, 200);
+    }
+}
+
+function eventHandler(ev) {
+
+    //let p = new Promise(function (resolve, reject) {
+    let left = -1;
+    console.log(ev.detail.data[0].currentDirection);
+    let direction = ev.detail.data[0].currentDirection;
+    
+
+    let old = document.querySelector('.output-item');
+    let pa =old.parentElement;
+    if(pa===null){
+        console.log("It's NULL");
+        console.debug(pa);
+        console.trace(pa);
+    }    
+    if (old) {
+        RegionOne.unbind(old, 'pan');
+        let name = old.firstChild.data;
+
+        let h = document.createElement("h1");
+        let color;
+        let text;
+        let action;
+
+        (90 < direction && direction < 270) ?
+        function () {
+            console.log(LEFT);
+            text = "Profile Delete";
+            color = "red";
+            action = LEFT;
+        }() : function () {
+            console.log(RIGHT);
+            text = "Profile Saved";
+            color = "green";
+            action = RIGHT;
+        }();
+        old.classList.add('fadeout');
+        setTimeout(function () {
+            old.innerHTML = "";
+            h.textContent = text;
+            h.style.color = color;
+            old.appendChild(h);
+            old.classList.remove('fadeout');
+            old.classList.add("fadein");
+
+            //output.innerHTML="";
+
+        }, 300);
+        setTimeout(function () {
+            if(pa===null){
+                console.log("It's NULL");
+                console.debug(pa);
+                console.trace(pa);
+            }
+            pa.removeChild(old);
+            processProfile(name, action);
+            if (profiles.length <= 3) {
+                getProfiles();
+            }
+            createHtmlforProfile();
+        }, 800)
+    }
+    // });
+
+}
 //
-//            old.parentElement.removeChild(old);
-//        }, 200);
-        //old.innerHTML="";
-        old.parentElement.removeChild(old);
-//        old.removeChild(old);
-    }
 
-    if (profiles.length <= 3) {
-        getProfiles();
-        console.log("end of file");
-        //return;
+function getIndex(value) {
+
+    for (let i = 0; i < profiles.length; i++) {
+        let name = "".concat(profiles[i].first, " ", profiles[i].last);
+        if (name == value) {
+            return {
+                person: profiles[i],
+                index: i
+            };
+        }
     }
-    createHtmlforProfile();
+    return null;
 }
 
 /******************************************************************
 // Delete profile in profiles
 *****************************************************************/
 
-function deleteItem(name) {
+function processProfile(name, action) {
     let ret = getIndex(name);
 
-    if (null != ret) {
-        console.log("find name: " + "".concat(ret.person.first, " ", ret.person.last));
+    if (null != ret && action === LEFT) {
+        //console.log("find name: " + "".concat(ret.person.first, " ", ret.person.last));
+
         profiles.shift();
-        //        profiles.splice(ret.index, 1);
         console.log(profiles);
-    } else {
-        console.log("not found");
-    }
-
-}
-/******************************************************************
-// Delete profile in profiles
-*****************************************************************/
-function saveItem(name) {
-    let ret = getIndex(name);
-
-    if (null != ret) {
-        console.log("find name: " + "".concat(ret.person.first, " ", ret.person.last));
+    } else if (null != ret && action === RIGHT) {
         profiles.shift();
-        //        profiles.splice(ret.index, 1);
         peopleContainer.push(ret.person);
         localStorage.setItem("oh000024", JSON.stringify(peopleContainer));
     } else {
-        console.log("not found");
+        console.log("Not Found Name!!!!");
+    }
+}
+
+
+function createLists() {
+    
+    regionTwo = ZingTouch.Region(document.querySelector(".content"));
+    
+    let ul = document.createElement("ul");
+    ul.classList.add("table-vbiew");
+    ul.style.listStyle = "none";
+    listcontent = document.querySelector(".content");
+    //let lists = JSON.parse(localStorage.getItem("oh000024"));
+    [].forEach.call(peopleContainer, function (list) {
+        let li = document.createElement("li");
+        li.classList.add("table-view-cell", "media");
+
+        let span = document.createElement("span");
+        span.classList.add("media-object", "pull-left", "icon", "icon-trash");
+
+        //<img class="media-object pull-left" src="http://placehold.it/42x42">
+        let img = document.createElement("img");
+        img.classList.add("media-object", "pull-left");
+        img.src = imgurl + list.avatar;
+        img.style.width = "10%";
+        img.style.height = "10%";
+        // img.src = imgurl + profiles[0].avatar;
+
+        let div = document.createElement("div");
+        div.classList.add("media-body");
+        div.textContent = "".concat(list.first, " ", list.last);;
+
+        li.appendChild(span);
+        li.appendChild(img);
+        li.appendChild(div);
+        ul.appendChild(li);
+        //span.addEventListener(span, deleteList);
+        regionTwo.bind(span,'tap', deleteList);
+    })
+    listcontent.appendChild(ul);
+
+}
+
+function deleteList(e) {
+    let span = e.currentTarget;
+    let li = e.currentTarget.parentNode;
+    let ul = e.currentTarget.parentNode.parentNode;
+
+    for (let i = 0; i < peopleContainer.length; i++) {
+        let name = "".concat(peopleContainer[i].first, " ", peopleContainer[i].last);
+        if (name == li.textContent) {
+            regionTwo.unbind(span,'tap');
+            peopleContainer.splice(i, 1);
+            ul.removeChild(li);
+            localStorage.setItem("oh000024", JSON.stringify(peopleContainer));
+            break;
+        }
     }
 }

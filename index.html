@@ -1,51 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tundra App</title>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Tundra</title>
     <!-- Sets initial viewport load and disables zooming  -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
     <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
+
     <!-- Include the compiled Ratchet CSS -->
     <link href="css/ratchet.min.css" rel="stylesheet" />
-
+      
     <!-- your OWN CSS file comes last -->
     <link href="css/custom.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/main.css">
-</head>
 
-<body>
+  </head>
+  <body>
+    <!-- 
+    bar bar-nav puts a <header> at the top of the page 
+    content inside header will be replace with content from new page's header
+    -->
     <header class="bar bar-nav">
-        <h1 class="title">HOME PAGE</h1>
+      <h1 class="title">Latest Profiles</h1>
     </header>
     <!-- bar bar-tab puts the <nav> at the bottom of the page -->
-    
     <nav class="bar bar-tab">
-        <a class="tab-item active" href="#home" data-transition="slide-in">
-            <span class="icon icon-home"></span>
-            <span class="tab-label">Home</span>
-        </a>
-        <a class="tab-item"  href="two.html" data-ignore="push" data-transition="slide-in">
+        <a class="tab-item active" href="index.html" data-transition="slide-in">
             <span class="icon icon-person"></span>
+            <span class="tab-label">Profiles</span>
+        </a>
+        <a class="tab-item" href="two.html" data-transition="slide-in">
+            <span class="icon icon-star-filled"></span>
             <span class="tab-label">Saved</span>
         </a>
     </nav>
-    
-    <div class="content home">
-        <!-- main content for the page goes here -->
-        <div class="content-padded">
-            <div id="output"></div>
+    <div class="content" id = "home">
+       <div class="content-padded">
+        <div id="output"></div>
         </div>
-    </div>
-
-    <script src="js/zingtouch.min.js"></script>
+    </div> 
+    <!-- include the compiled Ratchet JS -->
+    <script src="js/zingtouch-1.0.0.min.js"></script>
     <script src="js/ratchet.min.js"></script>
     <!-- then your own script -->
-    <script src="js/main.js"></script>
-</body>
 
+    <script src="js/main.js"></script>
+    
+  </body> 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -22,22 +22,22 @@
   <body>
     <!-- bar bar-nav puts a <header> at the top of the page -->
     <header class="bar bar-nav">
-      <h1 class="title">PAGE TWO</h1>
+      <h1 class="title">Saved Lists</h1>
     </header>
     <!-- bar bar-tab puts the <nav> at the bottom of the page --> 
     <nav class="bar bar-tab">
-        <a class="tab-item " tab-role="home" href="index.html" data-ignore="push" data-transition="slide-out">
+        <a class="tab-item " tab-role="home" href="index.html" data-transition="slide-out">
 <!--           <a class="icon icon-left-nav pull-left" tab-role="home" href="index.html">-->
-            <span class="icon icon-home"></span>
-            <span class="tab-label">Home</span>
+            <span class="icon icon-person"></span>
+            <span class="tab-label">Profiles</span>
         </a>
-        <a class="tab-item actice" href="two.html" tab-role="profiles" data-transition="slide-out">
-            <span class="icon icon-list"></span>
-            <span class="tab-label">Two</span>
+        <a class="tab-item active" href="two.html" tab-role="profiles" data-transition="slide-out">
+            <span class="icon icon-star-filled"></span>
+            <span class="tab-label">Saved</span>
         </a>
     </nav>
     
-    <div class="content">
+    <div class="content" id="two" ig>
         <!-- main content for the page goes here -->
         <div class="content-padded">
             <h3>Profiles</h3>
@@ -45,10 +45,10 @@
         </div>
         
     </div>
-    
+    <script src="js/zingtouch.min.js"></script>
     <!-- Include the compiled Ratchet JS -->
     <script src="js/ratchet.min.js"></script>
     <!-- then your own script -->
-    <script src="js/profiles.js"></script>
+    <script src="js/main.js"></script>
   </body> 
 </html>
